@@ -1,6 +1,6 @@
-version: '3.8'
+
 services:
-  # 项目服务
+  # 你的 SpringBoot 项目
   app:
     build: .
     container_name: springboot-demo01
@@ -9,17 +9,24 @@ services:
     depends_on:
       - mysql
       - redis
+      - zookeeper
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/demo?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=123456
       - SPRING_REDIS_HOST=redis
       - SPRING_REDIS_PORT=6379
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_ZOOKEEPER_HOST=zookeeper
+      - SPRING_ZOOKEEPER_PORT=2181
     volumes:
-      - ./logs:/app/logs  # 日志挂载到本地
+      - ./logs:/app/logs
     restart: always
 
-  # MySQL服务
+  # MySQL 8.0
   mysql:
     image: mysql:8.0
     container_name: demo-mysql
@@ -27,19 +34,34 @@ services:
       - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_DATABASE=demo  # 自动创建数据库
+      - MYSQL_DATABASE=demo
       - MYSQL_CHARACTER_SET_SERVER=utf8mb4
     volumes:
-      - ./mysql-data:/var/lib/mysql  # 数据持久化
+      - ./mysql-data:/var/lib/mysql
     restart: always
 
-  # Redis服务
+  # Redis 7
   redis:
     image: redis:7.0
     container_name: demo-redis
     ports:
       - "6379:6379"
     volumes:
-      - ./redis-data:/data  # 数据持久化
-    command: redis-server --appendonly yes  # 开启AOF持久化
+      - ./redis-data:/data
+    command: redis-server --appendonly yes
     restart: always
+
+  # Zookeeper 3.8
+  zookeeper:
+    image: zookeeper:3.8
+    container_name: demo-zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - ./zookeeper-data:/data
+      - ./zookeeper-datalog:/datalog
+    restart: always
+
+networks:
+  default:
+    driver: bridge

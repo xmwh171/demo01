@@ -1,7 +1,7 @@
 package com.example.demofirst.zk;
 
 import jakarta.annotation.Resource;
-import org.apache.curator.framework.CuratorFramework;
+//import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
 import org.springframework.stereotype.Component;
