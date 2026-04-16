@@ -38,4 +38,5 @@ build/
 .DS_Store
 
 # 忽略JVM日志文件
-jvm/gc.log.*
+*.log
+jvm/*.log
