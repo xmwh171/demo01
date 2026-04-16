@@ -1,0 +1,67 @@
+
+services:
+  # 你的 SpringBoot 项目
+  app:
+    build: .
+    container_name: springboot-demo01
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+      - zookeeper
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/demo?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+      - SPRING_ZOOKEEPER_HOST=zookeeper
+      - SPRING_ZOOKEEPER_PORT=2181
+    volumes:
+      - ./logs:/app/logs
+    restart: always
+
+  # MySQL 8.0
+  mysql:
+    image: mysql:8.0
+    container_name: demo-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=demo
+      - MYSQL_CHARACTER_SET_SERVER=utf8mb4
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    restart: always
+
+  # Redis 7
+  redis:
+    image: redis:7.0
+    container_name: demo-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    command: redis-server --appendonly yes
+    restart: always
+
+  # Zookeeper 3.8
+  zookeeper:
+    image: zookeeper:3.8
+    container_name: demo-zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - ./zookeeper-data:/data
+      - ./zookeeper-datalog:/datalog
+    restart: always
+
+networks:
+  default:
+    driver: bridge
