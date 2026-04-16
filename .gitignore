@@ -36,3 +36,7 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# 忽略JVM日志文件
+*.log
+jvm/*.log
